@@ -7,21 +7,19 @@ on:
 
 jobs:
   web-deploy:
-    name: Deploy
     runs-on: ubuntu-latest
 
     steps:
-    - name: Get latest code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Deploy to Main Server
-      if: github.ref == 'refs/heads/main'
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: 157.173.208.21
-        username: u158914145
-        password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /domains/blackin.shop/public_html/
-        # protocol: ftps
-        # port: 21
-        # retries: 3
+      - name: Deploy Laravel via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: 157.173.208.21
+          username: u158914145.blackin
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          server-dir: /public_html/
+          passive: true
