@@ -18,10 +18,10 @@ jobs:
       if: github.ref == 'refs/heads/main'
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
+        server: 157.173.208.21
+        username: u158914145
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /
+        server-dir: /domains/blackin.shop/public_html/
         # protocol: ftps
         # port: 21
         # retries: 3
