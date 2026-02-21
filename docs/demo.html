@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASColour Navigation Demo</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        /* Demo Page Header */
+        .demo-header {
+            background: #fff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .demo-header h1 {
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .demo-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* ASColour Navigation Styles */
+        .ascolour-nav-bar {
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            position: relative;
+            z-index: 999;
+        }
+        
+        .ascolour-nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .ascolour-nav-list {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            align-items: stretch;
+        }
+        
+        .ascolour-nav-item {
+            position: relative;
+            display: flex;
+            align-items: stretch;
+        }
+        
+        .ascolour-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            color: #000;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: background-color 0.2s ease;
+            position: relative;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        
+        .ascolour-nav-link:hover {
+            background-color: #f5f5f5;
+            color: #000;
+            text-decoration: none;
+        }
+        
+        .ascolour-mega-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100vw;
+            background: #fff;
+            border-top: 1px solid #e5e5e5;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 998;
+            pointer-events: none;
+        }
+        
+        .ascolour-nav-item:hover .ascolour-mega-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        
+        .ascolour-mega-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+        
+        .ascolour-mega-column {
+            min-width: 0;
+        }
+        
+        .ascolour-mega-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .ascolour-mega-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .ascolour-mega-links li {
+            margin-bottom: 8px;
+        }
+        
+        .ascolour-mega-links a {
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+            display: block;
+            padding: 6px 0;
+            transition: all 0.2s ease;
+        }
+        
+        .ascolour-mega-links a:hover {
+            color: #000;
+            padding-left: 8px;
+            text-decoration: none;
+        }
+        
+        .ascolour-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 997;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .ascolour-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        
+        .ascolour-nav-link.active {
+            font-weight: 700;
+            background-color: #f8f8f8;
+        }
+        
+        .ascolour-nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: #000;
+        }
+
+        /* Demo Content */
+        .demo-content {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .demo-section {
+            background: #fff;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .demo-section h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .demo-section p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .demo-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .demo-section li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .demo-section li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Header -->
+    <div class="demo-header">
+        <h1>ASColour Navigation Demo</h1>
+        <p>Hover over menu items to see the mega menu in action</p>
+    </div>
+
+    <!-- ASColour Navigation -->
+    <nav class="ascolour-nav-bar">
+        <div class="ascolour-nav-container">
+            <ul class="ascolour-nav-list">
+                <!-- Men Category -->
+                <li class="ascolour-nav-item">
+                    <a href="#" class="ascolour-nav-link active">Men</a>
+                    <div class="ascolour-mega-menu">
+                        <div class="ascolour-mega-content">
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">All Men</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">View All Men</a></li>
+                                </ul>
+                            </div>
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">Apparel</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">T-Shirts</a></li>
+                                    <li><a href="#">Tanks & Singlets</a></li>
+                                    <li><a href="#">Longsleeves</a></li>
+                                    <li><a href="#">Sweatshirts</a></li>
+                                    <li><a href="#">Trackpants</a></li>
+                                    <li><a href="#">Shirts & Polos</a></li>
+                                    <li><a href="#">Jackets</a></li>
+                                </ul>
+                            </div>
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">Accessories</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">Headwear</a></li>
+                                    <li><a href="#">Totes</a></li>
+                                    <li><a href="#">Bags</a></li>
+                                    <li><a href="#">Socks & Underwear</a></li>
+                                    <li><a href="#">Belts</a></li>
+                                    <li><a href="#">Aprons & Bibs</a></li>
+                                </ul>
+                            </div>
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">Featured</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">New Arrivals</a></li>
+                                    <li><a href="#">Best Sellers</a></li>
+                                    <li><a href="#">Activewear</a></li>
+                                    <li><a href="#">Workwear</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Women Category -->
+                <li class="ascolour-nav-item">
+                    <a href="#" class="ascolour-nav-link">Women</a>
+                    <div class="ascolour-mega-menu">
+                        <div class="ascolour-mega-content">
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">All Women</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">View All Women</a></li>
+                                </ul>
+                            </div>
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">Apparel</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">T-Shirts</a></li>
+                                    <li><a href="#">Crop Tops</a></li>
+                                    <li><a href="#">Tanks & Singlets</a></li>
+                                    <li><a href="#">Longsleeves</a></li>
+                                    <li><a href="#">Dresses</a></li>
+                                    <li><a href="#">Sweatshirts</a></li>
+                                    <li><a href="#">Trackpants</a></li>
+                                </ul>
+                            </div>
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">Accessories</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">Headwear</a></li>
+                                    <li><a href="#">Totes</a></li>
+                                    <li><a href="#">Bags</a></li>
+                                    <li><a href="#">Socks</a></li>
+                                    <li><a href="#">Aprons</a></li>
+                                </ul>
+                            </div>
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">Featured</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">New Arrivals</a></li>
+                                    <li><a href="#">Best Sellers</a></li>
+                                    <li><a href="#">Activewear</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Kids Category -->
+                <li class="ascolour-nav-item">
+                    <a href="#" class="ascolour-nav-link">Kids</a>
+                    <div class="ascolour-mega-menu">
+                        <div class="ascolour-mega-content">
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">All Kids</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">View All Kids</a></li>
+                                </ul>
+                            </div>
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">Apparel</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">T-Shirts</a></li>
+                                    <li><a href="#">Sweatshirts</a></li>
+                                    <li><a href="#">Pants & Shorts</a></li>
+                                </ul>
+                            </div>
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">Accessories</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">Headwear</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Headwear Category -->
+                <li class="ascolour-nav-item">
+                    <a href="#" class="ascolour-nav-link">Headwear</a>
+                    <div class="ascolour-mega-menu">
+                        <div class="ascolour-mega-content">
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">All Headwear</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">View All Headwear</a></li>
+                                </ul>
+                            </div>
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">Styles</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">Caps</a></li>
+                                    <li><a href="#">Snapbacks</a></li>
+                                    <li><a href="#">Five Panel</a></li>
+                                    <li><a href="#">Truckers</a></li>
+                                    <li><a href="#">Bucket Hats</a></li>
+                                    <li><a href="#">Beanies</a></li>
+                                </ul>
+                            </div>
+                            <div class="ascolour-mega-column">
+                                <h3 class="ascolour-mega-title">Featured</h3>
+                                <ul class="ascolour-mega-links">
+                                    <li><a href="#">New Arrivals</a></li>
+                                    <li><a href="#">New Colours</a></li>
+                                    <li><a href="#">Coming Soon</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Static Menu Items -->
+                <li class="ascolour-nav-item">
+                    <a href="#" class="ascolour-nav-link">Outlet</a>
+                </li>
+                <li class="ascolour-nav-item">
+                    <a href="#" class="ascolour-nav-link">About</a>
+                </li>
+                <li class="ascolour-nav-item">
+                    <a href="#" class="ascolour-nav-link">Journal</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Backdrop -->
+    <div class="ascolour-backdrop"></div>
+
+    <!-- Demo Content -->
+    <div class="demo-content">
+        <div class="demo-section">
+            <h2>✨ Key Features</h2>
+            <p><strong>Hover-Activated Mega Menus:</strong> Move your mouse over "Men", "Women", "Kids", or "Headwear" to see the mega menu in action.</p>
+            <p><strong>Smooth Animations:</strong> Notice the smooth slide-down effect and backdrop fade.</p>
+            <p><strong>Multi-Column Layout:</strong> Subcategories are organized into multiple columns for easy scanning.</p>
+            <p><strong>Professional Design:</strong> Clean, minimalist aesthetic matching ASColour's brand.</p>
+        </div>
+
+        <div class="demo-section">
+            <h2>🎯 Design Elements</h2>
+            <ul>
+                <li>✅ Uppercase navigation links with proper letter spacing</li>
+                <li>✅ Subtle hover effects with background color changes</li>
+                <li>✅ Active state indication (see "Men" tab)</li>
+                <li>✅ Semi-transparent backdrop overlay</li>
+                <li>✅ Organized column headers (All, Apparel, Accessories, Featured)</li>
+                <li>✅ Clean typography hierarchy</li>
+                <li>✅ Smooth transitions and animations</li>
+            </ul>
+        </div>
+
+        <div class="demo-section">
+            <h2>💻 Implementation</h2>
+            <p>This navigation system is built with:</p>
+            <ul>
+                <li><strong>HTML/Blade Templates</strong> - Dynamic category rendering</li>
+                <li><strong>CSS Grid</strong> - Flexible multi-column layout</li>
+                <li><strong>CSS Transitions</strong> - Smooth animations</li>
+                <li><strong>Vanilla JavaScript</strong> - Backdrop interaction</li>
+            </ul>
+        </div>
+
+        <div class="demo-section">
+            <h2>📚 Documentation</h2>
+            <p>Complete documentation is available in the <code>/docs</code> folder:</p>
+            <ul>
+                <li><strong>ASCOLOUR_NAVIGATION.md</strong> - Complete implementation guide</li>
+                <li><strong>NAVIGATION_QUICK_REFERENCE.md</strong> - Quick customization reference</li>
+                <li><strong>DESIGN_COMPARISON.md</strong> - Design analysis and comparison</li>
+                <li><strong>README.md</strong> - Documentation index</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.ascolour-nav-item');
+            const backdrop = document.querySelector('.ascolour-backdrop');
+            
+            navItems.forEach(item => {
+                const megaMenu = item.querySelector('.ascolour-mega-menu');
+                
+                if (megaMenu) {
+                    item.addEventListener('mouseenter', function() {
+                        backdrop.classList.add('active');
+                    });
+                    
+                    item.addEventListener('mouseleave', function() {
+                        backdrop.classList.remove('active');
+                    });
+                }
+            });
+            
+            if (backdrop) {
+                backdrop.addEventListener('click', function() {
+                    this.classList.remove('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
