@@ -1192,7 +1192,7 @@
                         if(data.status == 1){
                             $('#addToCart-modal-body').html(data.modal_view);
                             updateNavCart(data.nav_cart_view,data.cart_count);
-                            window.location.replace("{{ route('cart') }}");
+                            window.location.replace("{{ route('checkout.single_page_checkout') }}");
                         }
                         else{
                             $('#addToCart-modal-body').html(null);

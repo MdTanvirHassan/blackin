@@ -1160,7 +1160,7 @@ class ProductController extends Controller
                         'slotCombinationHash' => $hasCombinationHashColumn && isset($slotCombinationHash) ? $slotCombinationHash : null,
                     ])->render(),
                     'redirect' => ($validated['action_type'] ?? 'add_to_cart') === 'buy_now' 
-                        ? route('cart') 
+                        ? route('checkout.single_page_checkout') 
                         : null
                 ]);
             }
@@ -1168,7 +1168,7 @@ class ProductController extends Controller
             flash(translate('Bundle added to cart successfully.'))->success();
 
             return ($validated['action_type'] ?? 'add_to_cart') === 'buy_now'
-                ? redirect()->route('cart')
+                ? redirect()->route('checkout.single_page_checkout')
                 : back();
 
         } catch (\Exception $e) {

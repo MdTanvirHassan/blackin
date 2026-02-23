@@ -315,7 +315,7 @@
         <div class="py-3 text-center border-top mx-4" style="border-color: #e5e5e5 !important;">
             <div class="row gutters-10 justify-content-center">
                 <div class="col-sm-6 mb-2">
-                    <a href="{{ route('cart') }}" class="btn btn-secondary-base btn-sm btn-block rounded-4 text-white">
+                    <a href="{{ route('checkout.single_page_checkout') }}" class="btn btn-secondary-base btn-sm btn-block rounded-4 text-white">
                         {{ translate('View cart') }}
                     </a>
                 </div>
