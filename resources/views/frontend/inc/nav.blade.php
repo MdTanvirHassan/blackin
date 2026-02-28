@@ -26,11 +26,8 @@
 @endif
 
 
-@if(Route::currentRouteName() == 'home')
-	@include('header.header1')
-@else
-	@include('header.header1_other_page')
-@endif
+
+@include('header.header1')
 
 <style>
     .aiz-top-menu-sidebar .collapse-sidebar {
