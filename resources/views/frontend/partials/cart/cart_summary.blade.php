@@ -7,20 +7,64 @@
             left: 0 !important;
             right: 0 !important;
             width: 100% !important;
-            background: #ffffff !important;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,1) 100%) !important;
+            box-shadow: 0 -6px 30px rgba(0, 0, 0, 0.25) !important;
             z-index: 999 !important; /* Lower than mobile nav (which typically has higher z-index) */
-            padding: 12px !important;
-            border-top: 2px solid #e0e0e0 !important;
+            padding: 16px !important;
+            border-top: 3px solid #007bff !important;
+            animation: pulse-glow 2s infinite ease-in-out !important;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 -6px 30px rgba(0, 0, 0, 0.25), 0 0 20px rgba(0, 123, 255, 0.3) !important;
+            }
+            50% {
+                box-shadow: 0 -8px 35px rgba(0, 0, 0, 0.3), 0 0 30px rgba(0, 123, 255, 0.5) !important;
+            }
         }
         
         .cart-sticky-checkout .btn {
             width: 100% !important;
+            font-size: 15px !important;
+            font-weight: 800 !important;
+            border-radius: 12px !important;
+            padding: 18px 20px !important;
+            min-height: 56px !important;
+            box-shadow: 0 6px 20px rgba(0,123,255,0.4) !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            position: relative !important;
+            overflow: hidden !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .cart-sticky-checkout .btn::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            width: 0 !important;
+            height: 0 !important;
+            border-radius: 50% !important;
+            background: rgba(255,255,255,0.3) !important;
+            transform: translate(-50%, -50%) !important;
+            transition: width 0.6s, height 0.6s !important;
+        }
+        
+        .cart-sticky-checkout .btn:active::before {
+            width: 300px !important;
+            height: 300px !important;
+        }
+        
+        .cart-sticky-checkout .btn i {
+            font-size: 20px !important;
+        }
+        
+        .cart-sticky-checkout .btn .badge {
             font-size: 14px !important;
-            border-radius: 8px !important;
-            padding: 12px 16px !important;
-            min-height: 44px !important;
-            box-shadow: 0 4px 12px rgba(0,123,255,0.3) !important;
+            padding: 4px 10px !important;
+            font-weight: 700 !important;
         }
         
         /* Add bottom padding to prevent content from being hidden behind sticky button and mobile nav */

@@ -11,6 +11,102 @@
     .bundle-items-list .bundle-item-card:last-child {
         margin-bottom: 0 !important;
     }
+    /* Mobile: Minimize all content sizes in added to cart modal */
+    @media (max-width: 767px) {
+        #addToCart .modal-body {
+            padding: 0.75rem !important;
+        }
+        #addToCart .modal-body .text-success svg {
+            width: 24px !important;
+            height: 24px !important;
+        }
+        #addToCart .modal-body .text-success h3 {
+            font-size: 16px !important;
+            margin-bottom: 0.75rem !important;
+        }
+        #addToCart .modal-body .mb-4 {
+            margin-bottom: 0.75rem !important;
+        }
+        #addToCart .modal-body .media {
+            margin-bottom: 0.5rem !important;
+        }
+        #addToCart .modal-body .size-90px {
+            width: 60px !important;
+            height: 60px !important;
+        }
+        #addToCart .modal-body .mr-4 {
+            margin-right: 0.75rem !important;
+        }
+        #addToCart .modal-body .fs-14 {
+            font-size: 11px !important;
+        }
+        #addToCart .modal-body .fs-16 {
+            font-size: 12px !important;
+        }
+        #addToCart .modal-body .fs-28 {
+            font-size: 16px !important;
+        }
+        #addToCart .modal-body .fs-15 {
+            font-size: 12px !important;
+        }
+        #addToCart .modal-body .fs-12 {
+            font-size: 10px !important;
+        }
+        #addToCart .modal-body .fs-11 {
+            font-size: 9px !important;
+        }
+        #addToCart .modal-body .mt-2 {
+            margin-top: 0.4rem !important;
+        }
+        #addToCart .modal-body .mt-1 {
+            margin-top: 0.25rem !important;
+        }
+        #addToCart .modal-body .mt-4 {
+            margin-top: 0.75rem !important;
+        }
+        #addToCart .modal-body .mb-1 {
+            margin-bottom: 0.4rem !important;
+        }
+        #addToCart .modal-body .mb-2 {
+            margin-bottom: 0.4rem !important;
+        }
+        #addToCart .modal-body .mb-3 {
+            margin-bottom: 0.5rem !important;
+        }
+        #addToCart .modal-body .p-3 {
+            padding: 0.5rem !important;
+        }
+        #addToCart .modal-body .bundle-item-card img {
+            width: 50px !important;
+            height: 50px !important;
+        }
+        #addToCart .modal-body .mr-3 {
+            margin-right: 0.5rem !important;
+        }
+        #addToCart .modal-body .ml-2 {
+            margin-left: 0.3rem !important;
+        }
+        #addToCart .modal-body .ml-3 {
+            margin-left: 0.5rem !important;
+        }
+        #addToCart .modal-body .btn {
+            padding: 0.75rem 1rem !important;
+            font-size: 14px !important;
+        }
+        #addToCart .modal-body .mb-sm-0 {
+            margin-bottom: 0 !important;
+        }
+        #addToCart .modal-body .gutters-5 {
+            margin-left: -5px !important;
+            margin-right: -5px !important;
+            margin-top: 1rem !important;
+        }
+        #addToCart .modal-body .gutters-5 > [class*="col"] {
+            padding-left: 5px !important;
+            padding-right: 5px !important;
+            margin-bottom: 0.5rem !important;
+        }
+    }
 </style>
     <!-- Item added to your cart -->
     <div class="text-center text-success mb-4">
@@ -115,10 +211,10 @@
     <!-- Back to shopping & Checkout buttons -->
     <div class="row gutters-5 mt-4">
         <div class="col-sm-6">
-            <button class="btn btn-secondary-base mb-3 mb-sm-0 btn-block rounded-0 text-white" data-dismiss="modal">{{ translate('Back to shopping')}}</button>
+            <button class="btn btn-danger mb-3 mb-sm-0 btn-block rounded-5 text-white" data-dismiss="modal">{{ translate('Back to shopping')}}</button>
         </div>
         <div class="col-sm-6">
-            <a href="{{ route('checkout.single_page_checkout') }}" class="btn btn-primary mb-3 mb-sm-0 btn-block rounded-0">{{ translate('Proceed to Checkout')}}</a>
+            <a href="{{ route('cart') }}" class="btn btn-primary mb-3 mb-sm-0 btn-block rounded-5">{{ translate('Proceed to Checkout')}}</a>
         </div>
     </div>
 </div>

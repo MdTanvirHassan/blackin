@@ -13,7 +13,7 @@
 <div class="ascolour-search-modal" id="searchModal" style="display: none;">
     <div class="ascolour-search-overlay" onclick="toggleSearch()"></div>
     <div class="ascolour-search-content">
-        <button class="ascolour-search-close" onclick="toggleSearch()">&times;</button>
+        <button class="ascolour-search-close" onclick="toggleSearch()">&times;</button>`
         <div class="ascolour-search-box">
             <form action="{{ route('search') }}" method="GET">
                 <input type="text" name="keyword" placeholder="Search for products..." autocomplete="off" autofocus>
