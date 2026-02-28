@@ -578,11 +578,17 @@
                 <!-- Add to cart -->
                 <div class="mt-3">
                     @if ($product->digital == 1)
-                        <button type="button" class="btn btn-primary rounded-5 buy-now fw-600 add-to-cart"
+                        <button type="button" class="btn btn-primary rounded-5 fw-600 add-to-cart"
                             @if (Auth::check() || get_Setting('guest_checkout_activation') == 1) onclick="addToCart()" @else onclick="showLoginModal()" @endif
                         >
                             <i class="la la-shopping-cart"></i>
                             <span>{{ translate('Add to cart')}}</span>
+                        </button>
+                        <button type="button" class="btn btn-success rounded-5 fw-600 ml-2 buy-now"
+                            @if (Auth::check() || get_Setting('guest_checkout_activation') == 1) onclick="buyNow()" @else onclick="showLoginModal()" @endif
+                        >
+                            <i class="la la-bolt"></i>
+                            <span>{{ translate('Buy Now')}}</span>
                         </button>
                     @elseif($qty > 0)
                         @if ($product->external_link != null)
@@ -591,11 +597,17 @@
                                 <span class="d-none d-md-inline-block">{{ translate($product->external_link_btn)}}</span>
                             </a>
                         @else
-                            <button type="button" class="btn btn-primary rounded-5 buy-now fw-600 add-to-cart"
+                            <button type="button" class="btn btn-primary rounded-5 fw-600 add-to-cart"
                                 @if (Auth::check() || get_Setting('guest_checkout_activation') == 1) onclick="addToCart()" @else onclick="showLoginModal()" @endif
                             >
                                 <i class="la la-shopping-cart"></i>
                                 <span>{{ translate('Add to cart')}}</span>
+                            </button>
+                            <button type="button" class="btn btn-success rounded-5 fw-600 ml-2 buy-now"
+                                @if (Auth::check() || get_Setting('guest_checkout_activation') == 1) onclick="buyNow()" @else onclick="showLoginModal()" @endif
+                            >
+                                <i class="la la-bolt"></i>
+                                <span>{{ translate('Buy Now')}}</span>
                             </button>
                         @endif
                     @endif
@@ -609,8 +621,4 @@
     </div>
 </div>
 
-<script type="text/javascript">
-    $('#option-choice-form input').on('change', function () {
-        getVariantPrice();
-    });
-</script>
+{{-- Variant price update handler is attached globally in the frontend layout --}}

@@ -1084,27 +1084,30 @@
             }
         }
 
-        $('#option-choice-form input').on('change', function(){
-            getVariantPrice();
+        $(document).on('change', '#option-choice-form input', function(){
+            getVariantPrice($(this).closest('form'));
         });
 
-        function getVariantPrice(){
-            if($('#option-choice-form input[name=quantity]').val() > 0 && checkAddToCartValidity()){
+        function getVariantPrice(form){
+            var $form = form ? $(form) : getOptionChoiceForm();
+            var $scope = ($('#addToCart').length && $('#addToCart').hasClass('show')) ? $('#addToCart') : $(document);
+
+            if($form.find('input[name=quantity]').val() > 0 && checkAddToCartValidity($form)){
                 $.ajax({
                     type:"POST",
                     url: '{{ route('products.variant_price') }}',
-                    data: $('#option-choice-form').serializeArray(),
+                    data: $form.serializeArray(),
                     success: function(data){
-                        $('.product-gallery-thumb .carousel-box').each(function (i) {
+                        $scope.find('.product-gallery-thumb .carousel-box').each(function (i) {
                             if($(this).data('variation') && data.variation == $(this).data('variation')){
-                                $('.product-gallery-thumb').slick('slickGoTo', i);
+                                $scope.find('.product-gallery-thumb').slick('slickGoTo', i);
                             }
                         })
 
-                        $('#option-choice-form #chosen_price_div').removeClass('d-none');
-                        $('#option-choice-form #chosen_price_div #chosen_price').html(data.price);
-                        $('#available-quantity').html(data.quantity);
-                        $('.input-number').prop('max', data.max_limit);
+                        $form.find('#chosen_price_div').removeClass('d-none');
+                        $form.find('#chosen_price_div #chosen_price').html(data.price);
+                        $form.find('#available-quantity').html(data.quantity);
+                        $form.find('.input-number').prop('max', data.max_limit);
                         if(parseInt(data.in_stock) == 0 && data.digital  == 0){
                            $('.buy-now').addClass('d-none');
                            $('.add-to-cart').addClass('d-none');
@@ -1122,9 +1125,25 @@
             }
         }
 
-        function checkAddToCartValidity(){
+        function getOptionChoiceForm() {
+            var $modal = $('#addToCart');
+            if ($modal.length && $modal.hasClass('show')) {
+                var $modalForm = $modal.find('#option-choice-form');
+                if ($modalForm.length) {
+                    return $modalForm;
+                }
+            }
+            return $('#option-choice-form').first();
+        }
+
+        function checkAddToCartValidity(form){
+            var $form = form ? $(form) : getOptionChoiceForm();
+            if (!$form || !$form.length) {
+                return false;
+            }
+
             var names = {};
-            $('#option-choice-form input:radio').each(function() { // find unique names
+            $form.find('input:radio').each(function() { // find unique names
                 names[$(this).attr('name')] = true;
             });
             var count = 0;
@@ -1132,7 +1151,7 @@
                 count++;
             });
 
-            if($('#option-choice-form input:radio:checked').length == count){
+            if($form.find('input:radio:checked').length == count){
                 return true;
             }
 
@@ -1145,13 +1164,14 @@
                 return false;
             @endif
 
-            if(checkAddToCartValidity()) {
+            var $form = getOptionChoiceForm();
+            if(checkAddToCartValidity($form)) {
                 $('#addToCart').modal();
                 $('.c-preloader').show();
                 $.ajax({
                     type:"POST",
                     url: '{{ route('cart.addToCart') }}',
-                    data: $('#option-choice-form').serializeArray(),
+                    data: $form.serializeArray(),
                     success: function(data){
                        $('#addToCart-modal-body').html(null);
                        $('.c-preloader').hide();
@@ -1180,14 +1200,22 @@
                 return false;
             @endif
 
-            if(checkAddToCartValidity()) {
-                $('#addToCart-modal-body').html(null);
+            var $form = getOptionChoiceForm();
+            if(checkAddToCartValidity($form)) {
+                var payload = $form.serializeArray();
+
+                // If triggered from inside the add-to-cart modal, don't wipe the form before serializing.
+                // (Clearing first can drop _token/options and cause CSRF mismatch.)
+                if (!($('#addToCart').length && $('#addToCart').hasClass('show'))) {
+                    $('#addToCart-modal-body').html(null);
+                }
+
                 $('#addToCart').modal();
                 $('.c-preloader').show();
                 $.ajax({
                     type:"POST",
                     url: '{{ route('cart.addToCart') }}',
-                    data: $('#option-choice-form').serializeArray(),
+                    data: payload,
                     success: function(data){
                         if(data.status == 1){
                             $('#addToCart-modal-body').html(data.modal_view);
