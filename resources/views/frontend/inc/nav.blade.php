@@ -26,7 +26,93 @@
 @endif
 
 
-	@include('header.' .get_element_type_by_id(get_setting('header_element')))
+@if(Route::currentRouteName() == 'home')
+	@include('header.header1')
+@else
+	@include('header.header1_other_page')
+@endif
+
+<style>
+    .aiz-top-menu-sidebar .collapse-sidebar {
+        background: linear-gradient(180deg, #0b0b0b 0%, #151515 45%, #0f1a24 100%);
+        color: #f5f5f5;
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar hr {
+        border-color: rgba(255, 255, 255, 0.12);
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar .nav-user-info h4 {
+        color: #ffffff !important;
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar .nav-user-img {
+        color: #ffffff !important;
+        border-color: rgba(255, 255, 255, 0.4) !important;
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar .nav-user-img svg path {
+        fill: #ffffff !important;
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar .nav-user-info a {
+        color: #ffffff !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar .header_menu_links {
+        color: #f5f5f5 !important;
+        border-radius: 10px;
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar .header_menu_links:hover {
+        color: #111111 !important;
+        background: linear-gradient(90deg, #f6c453 0%, #ff8f3f 100%);
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar .collapse a {
+        color: #f5f5f5 !important;
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar .mobile-cat-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar .mobile-cat-thumb {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        object-fit: cover;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar .mobile-subcat-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        object-fit: cover;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar .mobile-cat-thumb-fallback {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: #0b0b0b;
+        background: linear-gradient(135deg, #f6c453 0%, #ff8f3f 100%);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    }
+    .aiz-top-menu-sidebar .collapse-sidebar .mobile-subcat-thumb-fallback {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        color: #0b0b0b;
+        background: linear-gradient(135deg, #6ad1ff 0%, #5a7bff 100%);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    }
+</style>
 <!-- Top Menu Sidebar -->
 <div class="aiz-top-menu-sidebar collapse-sidebar-wrap sidebar-xl sidebar-left d-lg-none z-1035">
     <div class="overlay overlay-fixed dark c-pointer" data-toggle="class-toggle" data-target=".aiz-top-menu-sidebar"
@@ -74,6 +160,82 @@
         @endauth
         <hr>
         <ul class="mb-0 pl-3 pb-3 h-100">
+            @php
+                $selectedCategoryIds = json_decode(get_setting('header_selected_categories', '[]'), true) ?? [];
+                if (!empty($selectedCategoryIds) && count($selectedCategoryIds) > 0) {
+                    $categories = \App\Models\Category::with(['childrenCategories'])
+                        ->where('level', 0)
+                        ->whereIn('id', $selectedCategoryIds)
+                        ->get();
+                    $mobileMainCategories = $categories->sortBy(function($category) use ($selectedCategoryIds) {
+                        return array_search($category->id, $selectedCategoryIds);
+                    })->values();
+                } else {
+                    $mobileMainCategories = \App\Models\Category::with(['childrenCategories'])
+                        ->where('level', 0)
+                        ->orderBy('order_level', 'desc')
+                        ->take(2)
+                        ->get();
+                }
+            @endphp
+
+            <!-- Home -->
+            <li class="mr-0">
+                <a href="{{ route('home') }}" class="fs-13 px-3 py-3 w-100 d-inline-block fw-700 text-dark header_menu_links">
+                    {{ translate('Home') }}
+                </a>
+            </li>
+
+            <!-- Main Categories with Children -->
+            @foreach ($mobileMainCategories as $category)
+                @php $categoryChildren = $category->childrenCategories ?? collect(); @endphp
+                <li class="mr-0">
+                    @if ($categoryChildren->count() > 0)
+                        <a href="javascript:void(0);" class="fs-13 px-3 py-3 w-100 d-flex justify-content-between align-items-center fw-700 text-dark header_menu_links" data-toggle="collapse" data-target="#mobile-cat-{{ $category->id }}">
+                            <span class="mobile-cat-label">
+                                @if ($category->banner)
+                                    <img src="{{ uploaded_asset($category->banner) }}" alt="{{ $category->getTranslation('name') }}" class="mobile-cat-thumb" onerror="this.src='{{ static_asset('assets/img/placeholder.jpg') }}'">
+                                @else
+                                    <span class="mobile-cat-thumb-fallback">{{ substr($category->getTranslation('name'), 0, 1) }}</span>
+                                @endif
+                                <span>{{ $category->getTranslation('name') }}</span>
+                            </span>
+                            <i class="las la-angle-down"></i>
+                        </a>
+                        <div id="mobile-cat-{{ $category->id }}" class="collapse">
+                            <ul class="pl-4 mb-0">
+                                @foreach ($categoryChildren as $childCategory)
+                                    <li class="mr-0">
+                                        <a href="{{ route('products.category', $childCategory->slug) }}" class="fs-12 px-3 py-2 w-100 d-inline-block text-dark">
+                                            <span class="mobile-cat-label">
+                                                @if ($childCategory->banner)
+                                                    <img src="{{ uploaded_asset($childCategory->banner) }}" alt="{{ $childCategory->getTranslation('name') }}" class="mobile-subcat-thumb" onerror="this.src='{{ static_asset('assets/img/placeholder.jpg') }}'">
+                                                @else
+                                                    <span class="mobile-subcat-thumb-fallback">{{ substr($childCategory->getTranslation('name'), 0, 1) }}</span>
+                                                @endif
+                                                <span>{{ $childCategory->getTranslation('name') }}</span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @else
+                        <a href="{{ route('products.category', $category->slug) }}" class="fs-13 px-3 py-3 w-100 d-inline-block fw-700 text-dark header_menu_links">
+                            <span class="mobile-cat-label">
+                                @if ($category->banner)
+                                    <img src="{{ uploaded_asset($category->banner) }}" alt="{{ $category->getTranslation('name') }}" class="mobile-cat-thumb" onerror="this.src='{{ static_asset('assets/img/placeholder.jpg') }}'">
+                                @else
+                                    <span class="mobile-cat-thumb-fallback">{{ substr($category->getTranslation('name'), 0, 1) }}</span>
+                                @endif
+                                <span>{{ $category->getTranslation('name') }}</span>
+                            </span>
+                        </a>
+                    @endif
+                </li>
+            @endforeach
+
+            <!-- Header Menu Labels -->
             @if (get_setting('header_menu_labels') != null)
                 @foreach (json_decode(get_setting('header_menu_labels'), true) as $key => $value)
                     <li class="mr-0">
@@ -85,6 +247,82 @@
                     </li>
                 @endforeach
             @endif
+
+            <!-- All Categories -->
+            <li class="mr-0">
+                <a href="{{ route('categories.all') }}" class="fs-13 px-3 py-3 w-100 d-inline-block fw-700 text-dark header_menu_links">
+                    {{ translate('All Categories') }}
+                </a>
+            </li>
+
+            <!-- About with Sub-links -->
+            <li class="mr-0">
+                <a href="javascript:void(0);" class="fs-13 px-3 py-3 w-100 d-flex justify-content-between align-items-center fw-700 text-dark header_menu_links" data-toggle="collapse" data-target="#mobile-about-menu">
+                    <span>{{ translate('About') }}</span>
+                    <i class="las la-angle-down"></i>
+                </a>
+                <div id="mobile-about-menu" class="collapse">
+                    <ul class="pl-4 mb-0">
+                        <li class="mr-0">
+                            <a href="{{ route('terms') }}" class="fs-12 px-3 py-2 w-100 d-inline-block text-dark">
+                                {{ translate('Terms & Conditions') }}
+                            </a>
+                        </li>
+                        <li class="mr-0">
+                            <a href="{{ route('returnpolicy') }}" class="fs-12 px-3 py-2 w-100 d-inline-block text-dark">
+                                {{ translate('Return Policy') }}
+                            </a>
+                        </li>
+                        <li class="mr-0">
+                            <a href="{{ route('supportpolicy') }}" class="fs-12 px-3 py-2 w-100 d-inline-block text-dark">
+                                {{ translate('Support Policy') }}
+                            </a>
+                        </li>
+                        <li class="mr-0">
+                            <a href="{{ route('privacypolicy') }}" class="fs-12 px-3 py-2 w-100 d-inline-block text-dark">
+                                {{ translate('Privacy Policy') }}
+                            </a>
+                        </li>
+                        @if (get_setting('show_social_links'))
+                            @if (!empty(get_setting('instagram_link')))
+                                <li class="mr-0">
+                                    <a href="{{ get_setting('instagram_link') }}" target="_blank" class="fs-12 px-3 py-2 w-100 d-inline-block text-dark">
+                                        {{ translate('Instagram') }}
+                                    </a>
+                                </li>
+                            @endif
+                            @if (!empty(get_setting('facebook_link')))
+                                <li class="mr-0">
+                                    <a href="{{ get_setting('facebook_link') }}" target="_blank" class="fs-12 px-3 py-2 w-100 d-inline-block text-dark">
+                                        {{ translate('Facebook') }}
+                                    </a>
+                                </li>
+                            @endif
+                            @if (!empty(get_setting('twitter_link')))
+                                <li class="mr-0">
+                                    <a href="{{ get_setting('twitter_link') }}" target="_blank" class="fs-12 px-3 py-2 w-100 d-inline-block text-dark">
+                                        {{ translate('Twitter') }}
+                                    </a>
+                                </li>
+                            @endif
+                            @if (!empty(get_setting('youtube_link')))
+                                <li class="mr-0">
+                                    <a href="{{ get_setting('youtube_link') }}" target="_blank" class="fs-12 px-3 py-2 w-100 d-inline-block text-dark">
+                                        {{ translate('YouTube') }}
+                                    </a>
+                                </li>
+                            @endif
+                        @endif
+                    </ul>
+                </div>
+            </li>
+
+            <li class="mr-0">
+                <a href="{{ route('contact') }}" class="fs-13 px-3 py-3 w-100 d-inline-block fw-700 text-dark header_menu_links">
+                    {{ translate('Contact Us') }}
+                </a>
+            </li>
+
             @auth
                 @if (isAdmin())
                     <hr>

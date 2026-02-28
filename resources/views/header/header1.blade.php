@@ -13,7 +13,7 @@
 <div class="ascolour-search-modal" id="searchModal" style="display: none;">
     <div class="ascolour-search-overlay" onclick="toggleSearch()"></div>
     <div class="ascolour-search-content">
-        <button class="ascolour-search-close" onclick="toggleSearch()">&times;</button>`
+        <button class="ascolour-search-close" onclick="toggleSearch()">&times;</button>
         <div class="ascolour-search-box">
             <form action="{{ route('search') }}" method="GET">
                 <input type="text" name="keyword" placeholder="Search for products..." autocomplete="off" autofocus>
@@ -59,29 +59,42 @@ document.addEventListener('keydown', function(e) {
 <style>
     .ascolour-header-wrapper {
         position: sticky;
-        top: 0;
+        top: 35px;
         z-index: 10000 !important;
     }
     
     /* Top Banner */
     .ascolour-top-banner {
-        background: #333;
-        color: #b8860b;
+        background: #000000;
+        color: #ffffff;
         text-align: center;
-        padding: 10px 20px;
+        padding: 0 20px;
+        height: 35px;
         font-size: 12px;
         letter-spacing: 0.5px;
         text-transform: uppercase;
         position: relative;
+        align-items: center;
     }
     
     .ascolour-top-banner .custom-container {
         position: relative;
     }
-    
+
+    .ascolour-top-banner .custom-container {
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
     .banner-close {
+        display: none !important;
         position: absolute;
-        right: 20px;
+        right: 10px;
         top: 50%;
         transform: translateY(-50%);
         background: none;
@@ -90,10 +103,44 @@ document.addEventListener('keydown', function(e) {
         font-size: 20px;
         cursor: pointer;
         padding: 0;
-        width: 20px;
-        height: 20px;
+        width: 26px;
+        height: 26px;
         line-height: 1;
+        z-index: 3;
+        touch-action: manipulation;
     }
+
+    .banner-content-wrapper {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        padding-right: 34px;
+        display: flex;
+        align-items: center;
+    }
+
+    .banner-ticker {
+        display: inline-flex;
+        align-items: center;
+        height: 100%;
+        white-space: nowrap;
+        will-change: transform;
+        animation: banner-news-ticker 28s linear infinite;
+    }
+
+    .banner-item {
+        display: inline-block !important;
+        line-height: 1;
+        margin-right: 36px;
+        color: inherit;
+    }
+
+    @keyframes banner-news-ticker {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+
+
     
     /* Main Navigation */
     .ascolour-dark-nav {
@@ -635,8 +682,13 @@ document.addEventListener('keydown', function(e) {
     
     /* Responsive */
     @media (max-width: 991px) {
+        /* Top banner always visible on mobile */
+        .ascolour-top-banner {
+            display: flex !important;
+            visibility: visible !important;
+        }
         .ascolour-header-wrapper {
-            display: none;
+            display: block !important;
         }
     }
     
@@ -727,8 +779,8 @@ document.addEventListener('keydown', function(e) {
         color: #b8860b !important;
     }
     
-    /* Mobile Header Logo Centering */
-    @media (max-width: 767px) {
+    /* Mobile/Tablet Header Logo Centering & White Search Icon */
+    @media (max-width: 991px) {
         .logo-bar-area .custom-container > .d-flex {
             position: relative;
         }
@@ -757,13 +809,54 @@ document.addEventListener('keydown', function(e) {
             z-index: 2;
         }
         
-        /* White search icon in mobile view */
+        /* White search icon in mobile/tablet view */
         .logo-bar-area .d-lg-none.ml-auto a {
             color: #fff !important;
         }
         
         .logo-bar-area .d-lg-none.ml-auto i {
             color: #fff !important;
+        }
+    }
+
+    /* Show logo-bar-area and logo for tablet range */
+    @media (min-width: 768px) and (max-width: 991px) {
+        .logo-bar-area.d-md-none {
+            display: block !important;
+        }
+        .logo-bar-area .d-md-none {
+            display: flex !important;
+        }
+        .logo-bar-area .d-block.d-md-none {
+            display: block !important;
+        }
+        .logo-bar-area .custom-container {
+            padding-left: 20px;
+            padding-right: 20px;
+            max-width: 100%;
+        }
+        .logo-bar-area .d-flex.align-items-center {
+            justify-content: space-between;
+        }
+    }
+
+    /* Tablet Top Banner Styles */
+    @media (min-width: 768px) and (max-width: 990px) {
+        .ascolour-top-banner {
+            height: 35px !important;
+            padding: 0 12px !important;
+        }
+        .ascolour-top-banner .custom-container {
+            padding: 0 !important;
+            max-width: 100%;
+        }
+        .ascolour-top-banner .banner-item {
+            font-size: 10px !important;
+        }
+        .ascolour-header-wrapper {
+            position: sticky;
+            top: 35px;
+            margin-top: 0;
         }
     }
 </style>
@@ -898,10 +991,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="col-auto pl-0 pr-3 d-flex align-items-center d-md-none">
                     <a class="d-block d-md-none py-20px mr-3 ml-0" href="{{ route('home') }}">
                         @php
-                            $header_logo = get_setting('header_logo');
+                            $header_logo_white = get_setting('system_logo_black');
                         @endphp
-                        @if ($header_logo != null)
-                            <img id="header-logo-preview" src="{{ uploaded_asset($header_logo) }}" alt="{{ env('APP_NAME') }}"
+                        @if ($header_logo_white != null)
+                            <img id="header-logo-preview" src="{{ uploaded_asset($header_logo_white) }}" alt="{{ env('APP_NAME') }}"
                                 class="mw-100 h-30px h-md-40px" height="40">
                         @else
                             <img id="header-logo-preview" src="{{ static_asset('assets/img/logo.png') }}" alt="{{ env('APP_NAME') }}"
@@ -1443,14 +1536,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 
     <div class="ascolour-header-wrapper">
-    <!-- Top Banner (EST. 2005) -->
-    <div class="top-navbar z-1035 h-35px h-sm-auto top-background-color-visibility ascolour-top-banner"
-    style="background-color: {{  get_setting('top_header_bg_color')  }}">
-        <div class="custom-container">
-            <span>EST. 2005 - Celebrating 20 Years Made Better</span>
-            <button class="banner-close">&times;</button>
-        </div>
-    </div>
+
     
     <!-- Main Navigation Bar -->
     <nav class="ascolour-dark-nav bottom-background-color-visibility" style="background-color: {{ get_setting('bottom_header_bg_color') }}">
@@ -1660,7 +1746,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <h3 class="ascolour-column-title" style="margin: 0 0 15px 0; padding-bottom: 10px; border-bottom: 1px solid #404040; color: #b8860b; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
                                         {{ translate('Contact Us') }}
                                     </h3>
-                                    <a href="#" class="ascolour-child-category-item">
+                                    <a href="{{ route('contact') }}" class="ascolour-child-category-item">
                                         <div class="ascolour-child-category-image" style="background: linear-gradient(135deg, #555 0%, #404040 100%); display: flex; align-items: center; justify-content: center; color: #b8860b; font-size: 14px; font-weight: bold;">
                                             <i class="las la-envelope"></i>
                                         </div>
@@ -1676,14 +1762,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                         {{ translate('About Us') }}
                                     </h3>
                                     <div>
-                                        <a href="#" class="ascolour-child-category-item">
-                                            <div class="ascolour-child-category-image" style="background: linear-gradient(135deg, #555 0%, #404040 100%); display: flex; align-items: center; justify-content: center; color: #b8860b; font-size: 14px; font-weight: bold;">
-                                                <i class="las la-info-circle"></i>
-                                            </div>
-                                            <span style="color: #999; font-size: 14px;">
-                                                {{ translate('About Us') }}
-                                            </span>
-                                        </a>
                                         <a href="{{ route('terms') }}" class="ascolour-child-category-item">
                                             <div class="ascolour-child-category-image" style="background: linear-gradient(135deg, #555 0%, #404040 100%); display: flex; align-items: center; justify-content: center; color: #b8860b; font-size: 14px; font-weight: bold;">
                                                 <i class="las la-file-contract"></i>
