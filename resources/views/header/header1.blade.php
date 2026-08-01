@@ -1746,7 +1746,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <h3 class="ascolour-column-title" style="margin: 0 0 15px 0; padding-bottom: 10px; border-bottom: 1px solid #404040; color: #b8860b; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
                                         {{ translate('Contact Us') }}
                                     </h3>
-                                    <a href="{{ route('contact') }}" class="ascolour-child-category-item">
+                                    <a href="{{ route('custom-pages.show_custom_page', 'contact-us') }}" class="ascolour-child-category-item">
                                         <div class="ascolour-child-category-image" style="background: linear-gradient(135deg, #555 0%, #404040 100%); display: flex; align-items: center; justify-content: center; color: #b8860b; font-size: 14px; font-weight: bold;">
                                             <i class="las la-envelope"></i>
                                         </div>
