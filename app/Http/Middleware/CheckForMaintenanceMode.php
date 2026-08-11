@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Auth;
 use Illuminate\Contracts\Foundation\Application;
 
 class CheckForMaintenanceMode
@@ -16,13 +15,12 @@ class CheckForMaintenanceMode
     protected $app;
 
     /**
-     * The URIs that should be reachable while maintenance mode is enabled.
+     * URIs reachable while maintenance is on.
+     * Keep empty so every route shows the maintenance page.
      *
      * @var array
      */
-    protected $except = [
-        '/admin*', '/login', '/logout', '/subcategories*', '/subsubcategories*', '/home_categories*', '/aiz-uploader*'
-    ];
+    protected $except = [];
 
     /**
      * Create a new middleware instance.
@@ -41,24 +39,25 @@ class CheckForMaintenanceMode
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
      * @return mixed
-     *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function handle($request, Closure $next)
     {
-        if ($this->app->isDownForMaintenance()) {
+        $forced = (bool) config('maintenance.enabled', false);
+
+        if ($forced || $this->app->isDownForMaintenance()) {
             if ($request->is('api/*')) {
                 return response()->json([
                     'result' => false,
                     'status' => 'maintenance',
-                    'message' => translate('We are Under Maintenance')
-                ]);
+                    'message' => 'We are Under Maintenance'
+                ], 503);
             }
-            if ((Auth::check() && Auth::user()->user_type == 'admin') || (Auth::check() && Auth::user()->user_type == 'staff') || $this->inExceptArray($request)) {
+
+            if ($this->inExceptArray($request)) {
                 return $next($request);
-            } else {
-                return abort(503);
             }
+
+            return response()->view('errors.503', [], 503);
         }
 
         return $next($request);
